@@ -1,0 +1,162 @@
+---
+import { socialLinks } from "../config/social";
+
+type IconName = "twitter" | "bluesky" | "youtube" | "twitch" | "discord";
+
+const iconPaths: Record<IconName, string> = {
+  twitter:
+    "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z",
+  bluesky:
+    "M5.202 2.857C7.954 4.922 10.913 9.11 12 11.358c1.087-2.247 4.046-6.436 6.798-8.501C20.783 1.366 24 .213 24 3.883c0 .732-.42 6.156-.667 7.037-.856 3.061-3.978 3.842-6.755 3.37 4.854.826 6.089 3.562 3.422 6.299-5.065 5.196-7.28-1.304-7.847-2.97-.104-.305-.152-.448-.153-.327 0-.121-.05.022-.153.327-.568 1.666-2.782 8.166-7.847 2.97-2.667-2.737-1.432-5.473 3.422-6.3-2.777.473-5.899-.308-6.755-3.369C.42 10.04 0 4.615 0 3.883c0-3.67 3.217-2.517 5.202-1.026",
+  youtube:
+    "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z",
+  twitch:
+    "M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z",
+  discord:
+    "M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z",
+};
+---
+
+<nav class="social reveal" aria-label="Redes sociales">
+    <ul class="social__list" role="list">
+        {socialLinks.links.map((link) => (
+            <li class="social__item">
+                <a
+                    class="social__link"
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={link.label}
+                >
+                    <svg
+                        class="social__icon"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path d={iconPaths[link.icon as IconName]} />
+                    </svg>
+                </a>
+            </li>
+        ))}
+    </ul>
+</nav>
+
+<style>
+    .social {
+        display: flex;
+        justify-content: center;
+        padding: var(--space-2xl) var(--space-md) var(--space-3xl);
+    }
+
+    .social__list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-sm);
+        list-style: none;
+        max-width: 26rem;
+    }
+
+    .social__link {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 3.25rem;
+        height: 3.25rem;
+        border-radius: 1rem;
+        color: var(--color-muted);
+        background-color: rgba(19, 22, 29, 0.55);
+        border: 1px solid rgba(242, 244, 248, 0.1);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.06),
+            0 6px 18px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(12px) saturate(135%);
+        -webkit-backdrop-filter: blur(12px) saturate(135%);
+        overflow: hidden;
+        isolation: isolate;
+        transition:
+            color 0.25s var(--ease-out),
+            transform 0.25s var(--ease-spring),
+            border-color 0.25s var(--ease-out),
+            box-shadow 0.25s var(--ease-out);
+        will-change: transform;
+    }
+
+    /* Inner top highlight */
+    .social__link::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.25),
+            transparent
+        );
+        opacity: 0.6;
+        z-index: 1;
+    }
+
+    /* Spotlight glow */
+    .social__link::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: radial-gradient(
+            circle at 50% 50%,
+            rgba(124, 131, 253, 0.35) 0%,
+            transparent 70%
+        );
+        opacity: 0;
+        transition: opacity 0.3s var(--ease-out);
+    }
+
+    .social__link:hover,
+    .social__link:focus-visible {
+        color: var(--color-text);
+        border-color: rgba(124, 131, 253, 0.4);
+        transform: translateY(-4px) scale(1.06);
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.08),
+            0 10px 28px rgba(0, 0, 0, 0.35),
+            0 0 24px rgba(124, 131, 253, 0.18);
+    }
+
+    .social__link:hover::after,
+    .social__link:focus-visible::after {
+        opacity: 1;
+    }
+
+    .social__icon {
+        position: relative;
+        z-index: 2;
+        width: 1.45rem;
+        height: 1.45rem;
+        flex-shrink: 0;
+    }
+
+    @media (min-width: 480px) {
+        .social__list {
+            gap: var(--space-md);
+        }
+
+        .social__link {
+            width: 3.5rem;
+            height: 3.5rem;
+        }
+
+        .social__icon {
+            width: 1.55rem;
+            height: 1.55rem;
+        }
+    }
+</style>

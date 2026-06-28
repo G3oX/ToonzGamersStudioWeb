@@ -1,0 +1,46 @@
+# Build output
+dist/
+.output/
+
+# Astro generated types & cache
+.astro/
+
+# Dependencies
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Editor / IDE
+.idea/
+*.swp
+*.swo
+*~
+# VS Code: keep shared config (extensions.json, launch.json), ignore user state
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/settings.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test / coverage
+coverage/
+.nyc_output/
+
+# Misc
+.cache/
+.temp/
+.tmp/

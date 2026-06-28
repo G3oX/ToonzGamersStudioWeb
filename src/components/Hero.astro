@@ -1,0 +1,178 @@
+---
+import { siteConfig } from "../config/site";
+---
+
+<section class="hero" aria-label="Introducción">
+    <div class="hero__aurora" aria-hidden="true">
+        <div class="hero__aurora-blob hero__aurora-blob--1"></div>
+        <div class="hero__aurora-blob hero__aurora-blob--2"></div>
+        <div class="hero__aurora-blob hero__aurora-blob--3"></div>
+    </div>
+
+    <div class="hero__inner">
+        <img
+            class="hero__logo"
+            src="/images/logo.png"
+            alt="ToonzGamers Studio"
+            width="128"
+            height="128"
+            loading="eager"
+            decoding="async"
+        />
+        <h1 class="hero__title">{siteConfig.name}</h1>
+        <p class="hero__description">{siteConfig.description}</p>
+    </div>
+</section>
+
+<style>
+    .hero {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 85vh;
+        padding: var(--space-xl) var(--space-md);
+        text-align: center;
+        overflow: hidden;
+        isolation: isolate;
+    }
+
+    /* Aurora / gradient mesh background */
+    .hero__aurora {
+        position: absolute;
+        inset: 0;
+        z-index: var(--z-aurora);
+        pointer-events: none;
+        filter: blur(50px);
+    }
+
+    .hero__aurora-blob {
+        position: absolute;
+        border-radius: 50%;
+        opacity: 0.6;
+        will-change: transform;
+    }
+
+    .hero__aurora-blob--1 {
+        width: 80vw;
+        height: 80vw;
+        max-width: 45rem;
+        max-height: 45rem;
+        top: -20%;
+        left: -10%;
+        background: radial-gradient(
+            circle at 50% 50%,
+            rgba(0, 240, 240, 0.35),
+            transparent 65%
+        );
+        animation: auroraDrift 18s ease-in-out infinite;
+    }
+
+    .hero__aurora-blob--2 {
+        width: 70vw;
+        height: 70vw;
+        max-width: 40rem;
+        max-height: 40rem;
+        bottom: -15%;
+        right: -15%;
+        background: radial-gradient(
+            circle at 50% 50%,
+            rgba(124, 131, 253, 0.4),
+            transparent 65%
+        );
+        animation: auroraDrift 22s ease-in-out infinite reverse;
+    }
+
+    .hero__aurora-blob--3 {
+        width: 60vw;
+        height: 60vw;
+        max-width: 32rem;
+        max-height: 32rem;
+        top: 35%;
+        left: 35%;
+        background: radial-gradient(
+            circle at 50% 50%,
+            rgba(0, 160, 128, 0.3),
+            transparent 60%
+        );
+        animation: auroraDrift 26s ease-in-out infinite;
+        mix-blend-mode: screen;
+    }
+
+    @media (max-width: 640px) {
+        .hero__aurora {
+            filter: blur(36px);
+        }
+
+        .hero__aurora-blob {
+            opacity: 0.45;
+        }
+    }
+
+    .hero__inner {
+        position: relative;
+        z-index: var(--z-content);
+        max-width: 44rem;
+        padding: var(--space-lg);
+    }
+
+    .hero__logo {
+        width: 8rem;
+        height: 8rem;
+        margin: 0 auto var(--space-lg);
+        border-radius: 1.75rem;
+        object-fit: contain;
+        background-color: var(--color-surface);
+        border: 1px solid rgba(242, 244, 248, 0.08);
+        box-shadow:
+            0 1.25rem 3rem rgba(0, 0, 0, 0.4),
+            0 0 4rem rgba(124, 131, 253, 0.15);
+        animation:
+            fadeInScale 0.9s var(--ease-out) both,
+            float 6s 0.9s ease-in-out infinite;
+    }
+
+    .hero__title {
+        font-size: clamp(2.25rem, 7vw, 4.5rem);
+        font-weight: 800;
+        letter-spacing: -0.05em;
+        line-height: 1.05;
+        margin-bottom: var(--space-md);
+        background: linear-gradient(
+            90deg,
+            var(--color-text) 0%,
+            var(--color-cyan) 22%,
+            var(--color-accent) 50%,
+            var(--color-teal) 78%,
+            var(--color-text) 100%
+        );
+        background-size: 225% auto;
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation:
+            fadeInUp 0.85s var(--ease-out) 0.12s both,
+            shimmer 10s linear 1s infinite;
+    }
+
+    .hero__description {
+        font-size: clamp(1rem, 2.6vw, 1.25rem);
+        color: var(--color-muted);
+        max-width: 36rem;
+        margin: 0 auto;
+        line-height: 1.7;
+        animation: fadeInUp 0.85s var(--ease-out) 0.28s both;
+    }
+
+    @media (min-width: 768px) {
+        .hero {
+            min-height: 90vh;
+            padding: var(--space-3xl) var(--space-xl);
+        }
+
+        .hero__logo {
+            width: 9.5rem;
+            height: 9.5rem;
+        }
+    }
+</style>

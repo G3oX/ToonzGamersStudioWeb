@@ -1,0 +1,105 @@
+---
+const words = [
+    "INDIE",
+    "PASIÓN",
+    "DISEÑO",
+    "TECNOLOGÍA",
+    "ORIGINAL",
+    "CRAFT",
+];
+---
+
+<section class="marquee reveal" aria-label="Valores del estudio">
+    <p class="visually-hidden">
+        {words.join(" · ")}
+    </p>
+
+    <div class="marquee__track" aria-hidden="true">
+        <div class="marquee__content">
+            {words.map((word) => (
+                <>
+                    <span class="marquee__word">{word}</span>
+                    <span class="marquee__dot"></span>
+                </>
+            ))}
+        </div>
+        <div class="marquee__content" aria-hidden="true">
+            {words.map((word) => (
+                <>
+                    <span class="marquee__word">{word}</span>
+                    <span class="marquee__dot"></span>
+                </>
+            ))}
+        </div>
+    </div>
+</section>
+
+<style>
+    .marquee {
+        position: relative;
+        padding: var(--space-md) 0;
+        overflow: hidden;
+        border-top: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--color-border);
+        background: rgba(0, 0, 0, 0.12);
+        mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 8%,
+            black 92%,
+            transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+            to right,
+            transparent 0%,
+            black 8%,
+            black 92%,
+            transparent 100%
+        );
+    }
+
+    .marquee__track {
+        display: flex;
+        width: max-content;
+        gap: 2rem;
+        animation: marqueeScroll 30s linear infinite;
+        will-change: transform;
+    }
+
+    .marquee__content {
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        flex-shrink: 0;
+    }
+
+    .marquee__word {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--color-muted);
+        white-space: nowrap;
+    }
+
+    .marquee__dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background-color: var(--color-accent);
+        opacity: 0.6;
+        flex-shrink: 0;
+    }
+
+    @media (min-width: 768px) {
+        .marquee__track,
+        .marquee__content {
+            gap: 2.5rem;
+        }
+
+        .marquee__word {
+            font-size: 0.8125rem;
+        }
+    }
+</style>
