@@ -44,6 +44,12 @@ export interface Project {
   links?: ProjectLink[];
   /** Si true, muestra el formulario de suscripción a novedades dentro de la tarjeta. */
   subscribe?: boolean;
+  /**
+   * Si la tarjeta es visible en la sección de proyectos.
+   * Por defecto `true`. Ponlo a `false` para ocultar una tarjeta
+   * sin tener que borrarla del array.
+   */
+  visible?: boolean;
 }
 
 export interface ProjectsConfig {
@@ -69,6 +75,16 @@ export const projectsConfig: ProjectsConfig = {
       ],
       subscribe: true,
       // image y links se añadirán cuando el proyecto tenga material publicable.
+    },
+    {
+      // Plantilla oculta. Copia esta entrada, cambia los valores y
+      // pon `visible: true` (o elimina la propiedad) para mostrarla.
+      id: "project-template",
+      title: "Nombre del proyecto",
+      description: "Descripción corta del proyecto (1-2 frases).",
+      status: "in_development",
+      statusLabel: "En desarrollo",
+      visible: false,
     },
   ],
 };

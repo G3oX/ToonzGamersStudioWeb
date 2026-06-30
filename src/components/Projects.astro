@@ -3,7 +3,8 @@ import { projectsConfig } from "../config/projects";
 import type { ProjectStatus, Platform } from "../config/projects";
 import ProjectSubscribe from "./ProjectSubscribe.astro";
 
-const { projects } = projectsConfig;
+const { projects: allProjects } = projectsConfig;
+const projects = allProjects.filter((p) => p.visible !== false);
 
 const badgeClassMap: Record<ProjectStatus, string> = {
   coming_soon: "projects__badge--coming-soon",
