@@ -74,7 +74,7 @@ export const projectsConfig: ProjectsConfig = {
         },
       ],
       subscribe: true,
-      // image y links se añadirán cuando el proyecto tenga material publicable.
+      image: "/images/projects/monkeys-tower-world-tour/cover.webp",
     },
     {
       // Plantilla oculta. Copia esta entrada, cambia los valores y
