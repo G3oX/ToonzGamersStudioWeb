@@ -2,7 +2,6 @@
 import MainLayout from "../layouts/MainLayout.astro";
 import Hero from "../components/Hero.astro";
 import Projects from "../components/Projects.astro";
-import NewsletterForm from "../components/NewsletterForm.astro";
 import { siteConfig } from "../config/site";
 ---
 
@@ -13,6 +12,7 @@ import { siteConfig } from "../config/site";
     <main>
         <Hero />
         <Projects />
-        <NewsletterForm />
+        {/* <NewsletterForm /> — Sección ocultada temporalmente.
+             La suscripción activa está en la tarjeta de Monkeys Tower. */}
     </main>
 </MainLayout>

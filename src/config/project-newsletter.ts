@@ -2,16 +2,16 @@
  * Configuración del frontend para el formulario de suscripción a
  * novedades de proyectos / juegos.
  *
- * Este formulario está preparado para usar un endpoint y una lista de
- * Brevo DIFERENTES a los de la newsletter general del estudio. Por ahora
- * el endpoint es un placeholder; el componente muestra un mensaje de
- * "Próximamente" hasta que se configure el backend real.
+ * El endpoint apunta al Cloudflare Worker independiente (cross-origin)
+ * que procesa las suscripciones contra la API de Brevo. Por ahora usa
+ * la misma lista que la newsletter general; en el futuro se puede
+ * configurar una lista independiente por proyecto.
  *
  * @module project-newsletter
  */
 
 export interface ProjectNewsletterConfig {
-  /** URL del endpoint que procesará las suscripciones (placeholder). */
+  /** URL del endpoint del Worker que procesa las suscripciones (POST, cross-origin). */
   endpoint: string;
   /** Mapas de mensajes mostrados al usuario según el estado. */
   messages: {
@@ -25,19 +25,16 @@ export interface ProjectNewsletterConfig {
     invalidEmail: string;
     /** Texto mostrado mientras se envía la solicitud. */
     loading: string;
-    /** Mensaje mostrado mientras el backend no está configurado. */
-    comingSoon: string;
   };
 }
 
 export const projectNewsletterConfig: ProjectNewsletterConfig = {
-  endpoint: "#", // TODO: configurar endpoint real del Worker con otra lista de Brevo.
+  endpoint: "https://webnewsletter.toonzgamersstudio.workers.dev/",
   messages: {
-    success: "¡Suscripción confirmada! Revisa tu correo.",
+    success: "¡Suscripción confirmada! Te avisaremos las novedades.",
     alreadySubscribed: "Ya estás suscrito. ¡Gracias!",
     error: "Error. Intenta de nuevo más tarde.",
     invalidEmail: "Introduce un email válido.",
     loading: "Suscribiendo...",
-    comingSoon: "Próximamente. ¡Gracias por tu interés!",
   },
 };

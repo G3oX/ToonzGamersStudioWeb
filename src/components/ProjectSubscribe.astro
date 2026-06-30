@@ -2,13 +2,10 @@
 /**
  * Componente de formulario de suscripción a novedades de proyectos / juegos.
  *
- * Es una versión "vista" del formulario: el UI está completo, pero aún no
- * envía los datos a un endpoint real. Cuando se configure el backend con una
- * lista de Brevo diferente a la newsletter general, se reemplazará el bloque
- * placeholder por una llamada `fetch` real.
- *
- * Soporta múltiples instancias mediante el prop `projectId`. Usa el modificador
- * `inline` cuando se renderiza dentro de una tarjeta de proyecto.
+ * Envía los datos al Cloudflare Worker (cross-origin) que procesa la
+ * suscripción contra la API de Brevo. Soporta múltiples instancias
+ * mediante el prop `projectId`. Usa el modificador `inline` cuando
+ * se renderiza dentro de una tarjeta de proyecto.
  *
  * @component
  * @example
@@ -172,7 +169,7 @@ const messageId = `psubscribe-message-${suffix}`;
           message.className = "psubscribe__message";
         }
 
-        form.addEventListener("submit", function (e) {
+        form.addEventListener("submit", async function (e) {
           e.preventDefault();
 
           clearStates();
@@ -196,15 +193,51 @@ const messageId = `psubscribe-message-${suffix}`;
 
           setLoading(true);
 
-          // PLACEHOLDER: no hay backend configurado aún (endpoint = "#").
-          // Cuando se configure el Worker con una lista de Brevo diferente,
-          // reemplazar este setTimeout por una llamada fetch como en NewsletterForm.
-          setTimeout(function () {
-            setMessage(CONFIG.messages.comingSoon, "success");
-            button.classList.add("is-success");
-            form.reset();
+          try {
+            var res = await fetch(CONFIG.endpoint, {
+              method: "POST",
+              mode: "cors",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                email: email,
+                website: honeypot ? honeypot.value : "",
+              }),
+            });
+
+            var data = null;
+            try {
+              data = await res.json();
+            } catch (_) {
+              // Si la respuesta no tiene JSON válido, se trata como error
+            }
+
+            if (res.ok && data && data.success === true) {
+              setMessage(
+                data.message || CONFIG.messages.success,
+                "success"
+              );
+              button.classList.add("is-success");
+              form.reset();
+            } else if (res.status === 429) {
+              // Rate limiting del WAF de Cloudflare
+              setMessage(
+                "Demasiados intentos. Espera un momento.",
+                "error"
+              );
+              button.classList.add("is-error");
+            } else {
+              setMessage(
+                (data && data.message) || CONFIG.messages.error,
+                "error"
+              );
+              button.classList.add("is-error");
+            }
+          } catch (_) {
+            setMessage(CONFIG.messages.error, "error");
+            button.classList.add("is-error");
+          } finally {
             setLoading(false);
-          }, 600);
+          }
         });
       });
     })();
