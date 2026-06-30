@@ -56,7 +56,7 @@ export const projectsConfig: ProjectsConfig = {
       id: "monkeys-tower-world-tour",
       title: "Monkeys Tower World Tour",
       description:
-        "Una aventura móvil colorida y adictiva en la que la estrategia y la diversión suben de nivel. Prepárate para desafiar torres, recolectar personajes únicos y disfrutar de partidas pensadas para sacar tu mejor jugada en cualquier momento.",
+        "Construye torres de monos para ganar el mundial. Supera los distintos niveles, usa power ups y personaliza tu pesonaje con atuendos de todo el mundo. ¡Llega a lo más alto y no los dejes caer!",
       status: "in_development",
       statusLabel: "En desarrollo",
       platforms: ["android"],
@@ -78,6 +78,17 @@ export const projectsConfig: ProjectsConfig = {
       status: "in_development",
       statusLabel: "En desarrollo",
       // subscribe omitido — sin formulario de suscripción en esta tarjeta.
+      subscribe: true,
+    },
+    {
+      id: "placeholder-project 2",
+      title: "Próximo proyecto 2",
+      description:
+        "Placeholder para probar el scroll horizontal y el indicador de progreso. Pronto anunciaremos un nuevo juego aquí.",
+      status: "in_development",
+      statusLabel: "En desarrollo",
+      // subscribe omitido — sin formulario de suscripción en esta tarjeta.
+      subscribe: true,
     },
   ],
 };

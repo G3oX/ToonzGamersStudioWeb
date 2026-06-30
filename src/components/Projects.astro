@@ -104,35 +104,37 @@ const platformIcons: Record<Platform, string> = {
                     <h3 class="projects__name">{project.title}</h3>
                     <p class="projects__description">{project.description}</p>
 
-                    {project.subscribe ? (
-                      <ProjectSubscribe projectId={project.id} inline />
-                    ) : project.links && project.links.length > 0 ? (
-                      <div class="projects__links">
-                        {project.links.map((link) => (
-                          <a
-                            class="projects__link"
-                            href={link.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {link.icon && (
-                              <svg
-                                class="projects__link-icon"
-                                width="18"
-                                height="18"
-                                viewBox="0 0 24 24"
-                                fill="currentColor"
-                                aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path d={platformIcons[link.icon]} />
-                              </svg>
-                            )}
-                            {link.label}
-                          </a>
-                        ))}
-                      </div>
-                    ) : null}
+                    <div class="projects__footer">
+                      {project.subscribe ? (
+                        <ProjectSubscribe projectId={project.id} inline />
+                      ) : project.links && project.links.length > 0 ? (
+                        <div class="projects__links">
+                          {project.links.map((link) => (
+                            <a
+                              class="projects__link"
+                              href={link.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {link.icon && (
+                                <svg
+                                  class="projects__link-icon"
+                                  width="18"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path d={platformIcons[link.icon]} />
+                                </svg>
+                              )}
+                              {link.label}
+                            </a>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                 </article>
               </li>
@@ -462,12 +464,12 @@ const platformIcons: Record<Platform, string> = {
 
   /* ─── Card body ────────────────────────────────────────── */
   .projects__body {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto;
     gap: var(--space-md);
     flex: 1 1 auto;
     padding: var(--space-lg);
-    overflow: hidden;
+    min-height: 0;
   }
 
   /* ─── Meta row: badge + platform icons ─────────────────── */
@@ -544,9 +546,11 @@ const platformIcons: Record<Platform, string> = {
     font-size: clamp(1rem, 2vw, 1.125rem);
     color: var(--color-muted);
     line-height: 1.65;
-    flex: 1 1 0;
-    min-height: 3rem;
-    overflow-y: auto;
+  }
+
+  /* ─── Footer (links or subscribe, anchored to bottom) ─── */
+  .projects__footer {
+    /* Grid row `auto` handles natural sizing */
   }
 
   /* ─── Links ────────────────────────────────────────────── */
