@@ -14,11 +14,15 @@
 
 export type ProjectStatus = "coming_soon" | "in_development" | "available";
 
+export type Platform = "webgl" | "android" | "ios" | "steam" | "epic" | "gog";
+
 export interface ProjectLink {
   /** Texto del enlace (p. ej., "Google Play", "Steam", "Web"). */
   label: string;
   /** URL absoluta del enlace. */
   href: string;
+  /** Icono de plataforma opcional para mostrar antes del label. */
+  icon?: Platform;
 }
 
 export interface Project {
@@ -32,6 +36,8 @@ export interface Project {
   status: ProjectStatus;
   /** Texto que se muestra en la chapa de estado. */
   statusLabel: string;
+  /** Plataformas donde está o estará disponible el proyecto. */
+  platforms?: Platform[];
   /** Ruta opcional de la imagen destacada (servida desde `public/`). */
   image?: string;
   /** Enlaces opcionales a tiendas, web o descargas. */
@@ -51,8 +57,16 @@ export const projectsConfig: ProjectsConfig = {
       title: "Monkeys Tower World Tour",
       description:
         "Una aventura móvil colorida y adictiva en la que la estrategia y la diversión suben de nivel. Prepárate para desafiar torres, recolectar personajes únicos y disfrutar de partidas pensadas para sacar tu mejor jugada en cualquier momento.",
-      status: "coming_soon",
-      statusLabel: "Próximamente en Android",
+      status: "in_development",
+      statusLabel: "En desarrollo",
+      platforms: ["android"],
+      links: [
+        {
+          label: "Google Play",
+          href: "https://play.google.com/store/apps/details?id=com.toonz.monkeys.tower.world.tour",
+          icon: "android",
+        },
+      ],
       subscribe: true,
       // image y links se añadirán cuando el proyecto tenga material publicable.
     },
