@@ -20,6 +20,9 @@ pnpm-debug.log*
 .env.*
 !.env.example
 
+# Worker local dev vars (secrets para wrangler dev)
+worker/.dev.vars
+
 # Editor / IDE
 .idea/
 *.swp
