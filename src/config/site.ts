@@ -10,7 +10,7 @@ export const siteConfig: SiteConfig = {
   name: "ToonzGamers Studio",
   description:
     "Estudio independiente de desarrollo de videojuegos formado por un único desarrollador, creando experiencias originales con pasión por el diseño y la tecnología.",
-  url: "https://toonzgamersstudio.com",
+  url: "https://toonzgamers.com",
   locale: "es_ES",
   lang: "es",
 };

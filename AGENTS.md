@@ -148,3 +148,40 @@ src/
 └── styles/        # Design tokens, reset, utilidades, keyframes
 public/            # Assets estáticos servidos tal cual
 ```
+
+---
+
+## Sistema de newsletter
+
+El proyecto incluye un sistema de suscripcion a newsletter que funciona
+como un proxy entre el frontend y la API v3 de Brevo mediante un **Worker
+independiente** de Cloudflare (proyecto separado en `worker/`).
+
+### Ubicacion de los archivos
+
+- `worker/src/index.ts` — **Handler principal del Worker** (`fetch` + CORS +
+  validaciones). Es el punto de entrada del backend.
+- `worker/src/` — Logica completa del Worker: servicio
+  (`newsletter-service.ts`), proveedor (`brevo-provider.ts`), validacion de
+  entorno (`env.ts`), seguridad (`security.ts`), tipos (`types.ts`) y
+  respuestas HTTP (`responses.ts`).
+- `worker/wrangler.toml` — Configuracion de despliegue (nombre del Worker,
+  variable publica `ALLOWED_ORIGINS`).
+- `src/config/newsletter.ts` — Configuracion publica del frontend (endpoint
+  cross-origin, mensajes de exito/error). Es la fuente unica de verdad para
+  el formulario.
+
+### Convenciones
+
+- El Worker se despliega en
+  `https://webnewsletter.toonzgamersstudio.workers.dev`. La web Astro
+  (estatica, `toonzgamers.com`) le hace peticiones cross-origin.
+- Las claves secretas (`BREVO_API_KEY`, `BREVO_LIST_ID`) se configuran
+  exclusivamente con `wrangler secret put` o en el dashboard de Cloudflare
+  Workers. **Nunca se commitean.**
+- `ALLOWED_ORIGINS` se define en `wrangler.toml` `[vars]` como variable
+  publica (no secreta).
+- No uses `.env` en el repositorio.
+- Consulta [`docs/newsletter.md`](./docs/newsletter.md) para la documentacion
+  completa del sistema (configuracion, desarrollo local, seguridad,
+  respuestas HTTP, cambio de proveedor).
