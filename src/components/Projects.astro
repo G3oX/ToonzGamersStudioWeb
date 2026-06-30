@@ -4,7 +4,6 @@ import type { ProjectStatus } from "../config/projects";
 import ProjectSubscribe from "./ProjectSubscribe.astro";
 
 const { projects } = projectsConfig;
-const projectCount = projects.length;
 
 const badgeClassMap: Record<ProjectStatus, string> = {
   coming_soon: "projects__badge--coming-soon",
@@ -144,6 +143,13 @@ const badgeClassMap: Record<ProjectStatus, string> = {
       });
     }
 
+    function scrollToIndex(i) {
+      var runway = container.offsetHeight - window.innerHeight;
+      var targetProgress = i / (projectCount - 1);
+      var targetScroll = container.offsetTop + targetProgress * runway;
+      window.scrollTo({ top: targetScroll, behavior: "smooth" });
+    }
+
     function layout() {
       TICKING = false;
 
@@ -184,6 +190,22 @@ const badgeClassMap: Record<ProjectStatus, string> = {
         item.style.opacity = String(opacity);
         item.style.zIndex = String(zIndex);
         item.style.filter = "blur(" + blur + ")";
+
+        // Side cards are clickable/keyboard-activatable to center them.
+        var nameEl = item.querySelector(".projects__name");
+        var title = nameEl ? nameEl.textContent || "" : "";
+
+        if (absOffset > 0.5) {
+          item.classList.add("is-side");
+          item.setAttribute("tabindex", "0");
+          item.setAttribute("role", "button");
+          item.setAttribute("aria-label", "Ver proyecto " + title);
+        } else {
+          item.classList.remove("is-side");
+          item.removeAttribute("tabindex");
+          item.setAttribute("role", "listitem");
+          item.removeAttribute("aria-label");
+        }
       });
     }
 
@@ -209,10 +231,25 @@ const badgeClassMap: Record<ProjectStatus, string> = {
 
     dots.forEach(function (dot, i) {
       dot.addEventListener("click", function () {
-        var runway = container.offsetHeight - window.innerHeight;
-        var targetProgress = i / (projectCount - 1);
-        var targetScroll = container.offsetTop + targetProgress * runway;
-        window.scrollTo({ top: targetScroll, behavior: "smooth" });
+        scrollToIndex(i);
+      });
+    });
+
+    items.forEach(function (item, i) {
+      item.addEventListener("click", function (e) {
+        if (!item.classList.contains("is-side")) return;
+        // Don't hijack clicks on interactive descendants.
+        if (e.target.closest("a, button, input, textarea")) return;
+        item.focus();
+        scrollToIndex(i);
+      });
+
+      item.addEventListener("keydown", function (e) {
+        if (!item.classList.contains("is-side")) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          scrollToIndex(i);
+        }
       });
     });
   })();
@@ -552,6 +589,16 @@ const badgeClassMap: Record<ProjectStatus, string> = {
 
   .projects--hijack .projects__card {
     width: 100%;
+  }
+
+  /* Side cards are clickable to center them. */
+  .projects--hijack .projects__item.is-side {
+    cursor: pointer;
+  }
+
+  .projects--hijack .projects__item.is-side:hover .projects__card,
+  .projects--hijack .projects__item.is-side:focus-visible .projects__card {
+    filter: brightness(1.1);
   }
 
   .projects--hijack .projects__dots {
