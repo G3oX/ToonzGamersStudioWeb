@@ -182,6 +182,14 @@ const platformIcons: Record<Platform, string> = {
     var SIDE_OPACITY = 0.5;
     var TICKING = false;
 
+    // Snap-to-nearest: when the user stops scrolling, animate to the
+    // closest card position so the carousel never rests between cards.
+    var SNAP_DELAY = 150;
+    var snapTimer = null;
+    var isSnapping = false;
+    var snapTarget = -1;
+    var currentPosition = 0;
+
     function recalc() {
       // One viewport of scroll per card transition.
       container.style.height = window.innerHeight * projectCount + "px";
@@ -195,10 +203,19 @@ const platformIcons: Record<Platform, string> = {
     }
 
     function scrollToIndex(i) {
+      isSnapping = true;
+      snapTarget = i;
       var runway = container.offsetHeight - window.innerHeight;
       var targetProgress = i / (projectCount - 1);
       var targetScroll = container.offsetTop + targetProgress * runway;
       window.scrollTo({ top: targetScroll, behavior: "smooth" });
+    }
+
+    function snapToNearest() {
+      snapTimer = null;
+      var nearest = Math.round(currentPosition);
+      if (Math.abs(currentPosition - nearest) < 0.01) return;
+      scrollToIndex(nearest);
     }
 
     function layout() {
@@ -210,8 +227,15 @@ const platformIcons: Record<Platform, string> = {
 
       // Linear carousel position: 0 = first card, projectCount-1 = last card.
       var position = progress * (projectCount - 1);
+      currentPosition = position;
       var activeIndex = Math.round(position);
       updateDots(activeIndex);
+
+      // Clear snapping flag when we reach the target position.
+      if (isSnapping && Math.abs(position - snapTarget) < 0.02) {
+        isSnapping = false;
+        snapTarget = -1;
+      }
 
       var centerCard = items[0].querySelector(".projects__card");
       var cardWidth = centerCard ? centerCard.offsetWidth : stage.offsetWidth;
@@ -276,6 +300,22 @@ const platformIcons: Record<Platform, string> = {
         window.requestAnimationFrame(layout);
         TICKING = true;
       }
+
+      // If a programmatic snap is in progress, detect user interruption:
+      // if the position deviates far from target, the user took over.
+      if (isSnapping) {
+        if (snapTarget >= 0 && Math.abs(currentPosition - snapTarget) > 0.3) {
+          isSnapping = false;
+          snapTarget = -1;
+          if (snapTimer) clearTimeout(snapTimer);
+          snapTimer = setTimeout(snapToNearest, SNAP_DELAY);
+        }
+        return;
+      }
+
+      // Debounce: when scrolling stops, snap to the nearest card.
+      if (snapTimer) clearTimeout(snapTimer);
+      snapTimer = setTimeout(snapToNearest, SNAP_DELAY);
     }
 
     recalc();
