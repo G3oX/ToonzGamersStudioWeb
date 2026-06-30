@@ -90,10 +90,10 @@ usuario lo pida explícitamente. El sitio es deliberadamente minimalista.
 La accesibilidad está integrada por diseño, no es opcional:
 
 - Añade `aria-label` a `<section>` y `<nav>`.
-- Marca como `aria-hidden="true"` la decoración pura (aurora, marquee
-  visual, overlay de ruido).
+- Marca como `aria-hidden="true"` la decoración pura (aurora, overlay de
+  ruido, placeholders de imagen).
 - Proporciona texto alternativo para contenido visual dirigido a lectores
-  de pantalla usando `.visually-hidden` (ver `Marquee.astro`).
+  de pantalla usando `.visually-hidden` (ver `NewsletterForm.astro`).
 - Todo enlace externo: `target="_blank"` + `rel="noopener noreferrer"`.
 - Asegura `:focus-visible` visible en elementos interactivos.
 - Las animaciones deben respetar `@media (prefers-reduced-motion: reduce)`.

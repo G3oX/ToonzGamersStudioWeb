@@ -1,14 +1,9 @@
 ---
 import { siteConfig } from "../config/site";
+import SocialLinks from "./SocialLinks.astro";
 ---
 
 <section class="hero" aria-label="Introducción">
-    <div class="hero__aurora" aria-hidden="true">
-        <div class="hero__aurora-blob hero__aurora-blob--1"></div>
-        <div class="hero__aurora-blob hero__aurora-blob--2"></div>
-        <div class="hero__aurora-blob hero__aurora-blob--3"></div>
-    </div>
-
     <div class="hero__inner">
         <img
             class="hero__logo"
@@ -21,6 +16,7 @@ import { siteConfig } from "../config/site";
         />
         <h1 class="hero__title">{siteConfig.name}</h1>
         <p class="hero__description">{siteConfig.description}</p>
+        <SocialLinks />
     </div>
 </section>
 
@@ -33,80 +29,6 @@ import { siteConfig } from "../config/site";
         min-height: 85vh;
         padding: var(--space-xl) var(--space-md);
         text-align: center;
-        overflow: hidden;
-        isolation: isolate;
-    }
-
-    /* Aurora / gradient mesh background */
-    .hero__aurora {
-        position: absolute;
-        inset: 0;
-        z-index: var(--z-aurora);
-        pointer-events: none;
-        filter: blur(50px);
-    }
-
-    .hero__aurora-blob {
-        position: absolute;
-        border-radius: 50%;
-        opacity: 0.6;
-        will-change: transform;
-    }
-
-    .hero__aurora-blob--1 {
-        width: 80vw;
-        height: 80vw;
-        max-width: 45rem;
-        max-height: 45rem;
-        top: -20%;
-        left: -10%;
-        background: radial-gradient(
-            circle at 50% 50%,
-            rgba(0, 240, 240, 0.35),
-            transparent 65%
-        );
-        animation: auroraDrift 18s ease-in-out infinite;
-    }
-
-    .hero__aurora-blob--2 {
-        width: 70vw;
-        height: 70vw;
-        max-width: 40rem;
-        max-height: 40rem;
-        bottom: -15%;
-        right: -15%;
-        background: radial-gradient(
-            circle at 50% 50%,
-            rgba(124, 131, 253, 0.4),
-            transparent 65%
-        );
-        animation: auroraDrift 22s ease-in-out infinite reverse;
-    }
-
-    .hero__aurora-blob--3 {
-        width: 60vw;
-        height: 60vw;
-        max-width: 32rem;
-        max-height: 32rem;
-        top: 35%;
-        left: 35%;
-        background: radial-gradient(
-            circle at 50% 50%,
-            rgba(0, 160, 128, 0.3),
-            transparent 60%
-        );
-        animation: auroraDrift 26s ease-in-out infinite;
-        mix-blend-mode: screen;
-    }
-
-    @media (max-width: 640px) {
-        .hero__aurora {
-            filter: blur(36px);
-        }
-
-        .hero__aurora-blob {
-            opacity: 0.45;
-        }
     }
 
     .hero__inner {

@@ -1,0 +1,514 @@
+---
+/**
+ * Componente de formulario de suscripción a novedades de proyectos / juegos.
+ *
+ * Es una versión "vista" del formulario: el UI está completo, pero aún no
+ * envía los datos a un endpoint real. Cuando se configure el backend con una
+ * lista de Brevo diferente a la newsletter general, se reemplazará el bloque
+ * placeholder por una llamada `fetch` real.
+ *
+ * Soporta múltiples instancias mediante el prop `projectId`. Usa el modificador
+ * `inline` cuando se renderiza dentro de una tarjeta de proyecto.
+ *
+ * @component
+ * @example
+ *   <ProjectSubscribe projectId="monkeys-tower-world-tour" inline />
+ */
+import { projectNewsletterConfig } from "../config/project-newsletter";
+import type { ProjectNewsletterConfig } from "../config/project-newsletter";
+
+interface Props {
+  /** Identificador único usado para generar IDs distintos en cada instancia. */
+  projectId?: string;
+  /** Versión compacta para usar dentro de una tarjeta de proyecto. */
+  inline?: boolean;
+}
+
+const { projectId = "default", inline = false } = Astro.props;
+const config: ProjectNewsletterConfig = projectNewsletterConfig;
+
+const suffix = projectId;
+const formId = `psubscribe-form-${suffix}`;
+const emailId = `psubscribe-email-${suffix}`;
+const messageId = `psubscribe-message-${suffix}`;
+---
+
+<section
+  class:list={["psubscribe", { "psubscribe--inline": inline }]}
+  aria-label="Suscripción a novedades de proyectos"
+>
+  <div class="psubscribe__inner">
+    <h2 class="psubscribe__title">
+      {inline ? "Acceder a la beta" : "Recibe novedades de nuestros juegos"}
+    </h2>
+    <p class:list={["psubscribe__subtitle", { "psubscribe__subtitle--inline": inline }]}
+    >
+      Suscríbete para recibir actualizaciones sobre nuestros proyectos y acceso
+      a betas.
+    </p>
+
+    <form
+      class="psubscribe__form"
+      id={formId}
+      action={config.endpoint}
+      method="POST"
+      data-config={JSON.stringify(config)}
+      data-psubscribe
+    >
+      <label class="psubscribe__label visually-hidden" for={emailId}>
+        Email
+      </label>
+
+      <div class="psubscribe__row">
+        <input
+          class="psubscribe__input"
+          type="email"
+          id={emailId}
+          name="email"
+          required
+          autocomplete="email"
+          placeholder="tu@email.com"
+          inputmode="email"
+          data-psubscribe-email
+        />
+
+        <!-- Honeypot: campo oculto para atrapar bots -->
+        <input
+          class="psubscribe__hp visually-hidden"
+          type="text"
+          name="website"
+          tabindex="-1"
+          autocomplete="off"
+          aria-hidden="true"
+          data-psubscribe-hp
+        />
+
+        <button
+          class="psubscribe__button"
+          type="submit"
+          data-psubscribe-button
+        >
+          {inline ? "Solicitar" : "Suscribirse"}
+        </button>
+      </div>
+
+      <p
+        class="psubscribe__message"
+        role="status"
+        aria-live="polite"
+        id={messageId}
+        data-psubscribe-message
+      ></p>
+    </form>
+
+    <noscript>
+      <p class="psubscribe__noscript">
+        El formulario de novedades de proyectos requiere JavaScript por ahora.
+        Pronto estará disponible el envío real.
+      </p>
+    </noscript>
+  </div>
+</section>
+
+<script is:inline>
+  // Guard: el componente puede renderizarse varias veces (una por tarjeta
+  // con subscribe activo). Este script solo debe inicializarse una vez.
+  if (window.__psubscribeInit) {
+    /* already initialized */
+  } else {
+    window.__psubscribeInit = true;
+    (function () {
+      var forms = document.querySelectorAll("[data-psubscribe]");
+      if (!forms.length) return;
+
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      forms.forEach(function (form) {
+        var CONFIG = JSON.parse(form.getAttribute("data-config") || "{}");
+
+        var input = /** @type {HTMLInputElement} */ (
+          form.querySelector("[data-psubscribe-email]")
+        );
+        var button = /** @type {HTMLButtonElement} */ (
+          form.querySelector("[data-psubscribe-button]")
+        );
+        var message = form.querySelector("[data-psubscribe-message]");
+        var honeypot = /** @type {HTMLInputElement} */ (
+          form.querySelector("[data-psubscribe-hp]")
+        );
+
+        if (!input || !button || !message) return;
+
+        // Captura del texto original del botón para restaurarlo tras loading.
+        var defaultButtonText = button.textContent;
+
+        function setMessage(text, type) {
+          message.textContent = text;
+          message.className = "psubscribe__message";
+          if (type) {
+            message.classList.add("psubscribe__message--" + type);
+          }
+        }
+
+        function setLoading(isLoading) {
+          if (isLoading) {
+            button.classList.add("is-loading");
+            button.setAttribute("aria-busy", "true");
+            button.textContent = CONFIG.messages.loading;
+            input.disabled = true;
+            button.disabled = true;
+          } else {
+            button.classList.remove("is-loading");
+            button.removeAttribute("aria-busy");
+            button.textContent = defaultButtonText;
+            input.disabled = false;
+            button.disabled = false;
+          }
+        }
+
+        function clearStates() {
+          button.classList.remove("is-success", "is-error");
+          input.classList.remove("is-error");
+          message.className = "psubscribe__message";
+        }
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          clearStates();
+
+          var email = input.value.trim();
+
+          // Validación cliente del email
+          if (!emailRegex.test(email)) {
+            input.classList.add("is-error");
+            setMessage(CONFIG.messages.invalidEmail, "error");
+            input.focus();
+            return;
+          }
+
+          // Honeypot: si el campo oculto tiene valor, es un bot
+          if (honeypot && honeypot.value.trim() !== "") {
+            setMessage(CONFIG.messages.success, "success");
+            form.reset();
+            return;
+          }
+
+          setLoading(true);
+
+          // PLACEHOLDER: no hay backend configurado aún (endpoint = "#").
+          // Cuando se configure el Worker con una lista de Brevo diferente,
+          // reemplazar este setTimeout por una llamada fetch como en NewsletterForm.
+          setTimeout(function () {
+            setMessage(CONFIG.messages.comingSoon, "success");
+            button.classList.add("is-success");
+            form.reset();
+            setLoading(false);
+          }, 600);
+        });
+      });
+    })();
+  }
+</script>
+
+<style>
+  /* ─── Project subscription section ───────────────────── */
+  .psubscribe {
+    --psubscribe-success: #4ade80;
+    --psubscribe-error: #f87171;
+    --psubscribe-on-accent: #0b0d12;
+    --psubscribe-accent-ring: rgba(124, 131, 253, 0.25);
+    --psubscribe-accent-glow: rgba(124, 131, 253, 0.3);
+    --psubscribe-error-ring: rgba(248, 113, 113, 0.2);
+
+    display: flex;
+    justify-content: center;
+    padding: var(--space-2xl) var(--space-md) var(--space-3xl);
+  }
+
+  .psubscribe__inner {
+    width: 100%;
+    max-width: 32rem;
+    text-align: center;
+  }
+
+  .psubscribe__title {
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+  }
+
+  .psubscribe__subtitle {
+    font-size: clamp(0.875rem, 2vw, 0.95rem);
+    color: var(--color-muted);
+    line-height: 1.6;
+    margin-bottom: var(--space-xl);
+  }
+
+  /* ─── Inline variant (inside project cards) ────────────── */
+  .psubscribe--inline {
+    padding: 0;
+  }
+
+  .psubscribe--inline .psubscribe__inner {
+    max-width: none;
+    text-align: left;
+  }
+
+  .psubscribe--inline .psubscribe__title {
+    font-size: 1rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .psubscribe__subtitle--inline {
+    display: none;
+  }
+
+  .psubscribe--inline .psubscribe__form {
+    padding: var(--space-sm);
+  }
+
+  .psubscribe--inline .psubscribe__input,
+  .psubscribe--inline .psubscribe__button {
+    height: 2.75rem;
+  }
+
+  .psubscribe--inline .psubscribe__message {
+    margin-top: var(--space-sm);
+  }
+
+  /* ─── Form card ────────────────────────────────────────── */
+  .psubscribe__form {
+    position: relative;
+    padding: var(--space-md);
+    text-align: left;
+    background-color: rgba(19, 22, 29, 0.55);
+    border: 1px solid rgba(242, 244, 248, 0.1);
+    border-radius: 1rem;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 6px 18px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px) saturate(135%);
+    -webkit-backdrop-filter: blur(12px) saturate(135%);
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .psubscribe__form::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    opacity: 0.6;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ─── Form row ─────────────────────────────────────────── */
+  .psubscribe__row {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: stretch;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ─── Input ────────────────────────────────────────────── */
+  .psubscribe__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0 var(--space-md);
+    height: 3.25rem;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--color-text);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.85rem;
+    outline: none;
+    transition:
+      border-color 0.25s var(--ease-out),
+      box-shadow 0.25s var(--ease-out),
+      opacity 0.25s var(--ease-out);
+  }
+
+  .psubscribe__input::placeholder {
+    color: var(--color-muted);
+    opacity: 0.75;
+  }
+
+  .psubscribe__input:focus-visible {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px var(--psubscribe-accent-ring);
+  }
+
+  .psubscribe__input.is-error {
+    border-color: var(--psubscribe-error);
+    box-shadow: 0 0 0 3px var(--psubscribe-error-ring);
+  }
+
+  .psubscribe__input:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  /* ─── Button ───────────────────────────────────────────── */
+  .psubscribe__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 0 var(--space-xl);
+    height: 3.25rem;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--psubscribe-on-accent);
+    background-color: var(--color-accent);
+    border: none;
+    border-radius: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+      background-color 0.25s var(--ease-out),
+      color 0.25s var(--ease-out),
+      transform 0.25s var(--ease-out),
+      box-shadow 0.25s var(--ease-out),
+      opacity 0.25s var(--ease-out);
+    will-change: transform;
+  }
+
+  .psubscribe__button:hover,
+  .psubscribe__button:focus-visible {
+    background-color: var(--color-accent-hover);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 24px var(--psubscribe-accent-glow);
+  }
+
+  .psubscribe__button:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .psubscribe__button:disabled {
+    cursor: not-allowed;
+  }
+
+  /* Estados del botón */
+  .psubscribe__button.is-loading {
+    opacity: 0.65;
+    cursor: wait;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .psubscribe__button.is-loading:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .psubscribe__button.is-success {
+    background-color: var(--psubscribe-success);
+    color: var(--psubscribe-on-accent);
+    cursor: default;
+  }
+
+  .psubscribe__button.is-success:hover {
+    background-color: var(--psubscribe-success);
+    transform: none;
+    box-shadow: none;
+  }
+
+  .psubscribe__button.is-error {
+    background-color: var(--psubscribe-error);
+    color: var(--psubscribe-on-accent);
+    cursor: default;
+  }
+
+  .psubscribe__button.is-error:hover {
+    background-color: var(--psubscribe-error);
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* ─── Message ──────────────────────────────────────────── */
+  .psubscribe__message {
+    min-height: 1.5rem;
+    margin-top: var(--space-md);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+    transition: color 0.2s var(--ease-out);
+  }
+
+  .psubscribe__message--success {
+    color: var(--psubscribe-success);
+  }
+
+  .psubscribe__message--error {
+    color: var(--psubscribe-error);
+  }
+
+  /* ─── Noscript ─────────────────────────────────────────── */
+  .psubscribe__noscript {
+    margin-top: var(--space-md);
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    opacity: 0.7;
+    line-height: 1.5;
+  }
+
+  /* ─── Responsive ───────────────────────────────────────── */
+  @media (max-width: 479px) {
+    .psubscribe__form {
+      padding: var(--space-sm);
+    }
+
+    .psubscribe__row {
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .psubscribe__input,
+    .psubscribe__button {
+      width: 100%;
+    }
+  }
+
+  @media (min-width: 480px) {
+    .psubscribe__button {
+      padding: 0 var(--space-xl);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .psubscribe {
+      padding: var(--space-3xl) var(--space-xl);
+    }
+  }
+
+  /* ─── Reduced motion ───────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .psubscribe__input,
+    .psubscribe__button,
+    .psubscribe__message {
+      transition: none;
+    }
+
+    .psubscribe__button:hover,
+    .psubscribe__button:focus-visible {
+      transform: none;
+    }
+  }
+</style>

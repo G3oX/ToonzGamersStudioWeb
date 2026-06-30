@@ -75,20 +75,81 @@ body {
   line-height: 1.6;
   color: var(--color-text);
   background-color: var(--color-bg);
-  background-image:
-    radial-gradient(
-      ellipse 140% 80% at 50% -10%,
-      rgba(124, 131, 253, 0.1),
-      transparent 55%
-    ),
-    radial-gradient(
-      ellipse 90% 50% at 85% 105%,
-      rgba(0, 160, 128, 0.08),
-      transparent 50%
-    );
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fixed full-page aurora background — uniform across all sections */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-aurora);
+  pointer-events: none;
+  filter: blur(60px);
+}
+
+.aurora-bg__blob {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.4;
+  will-change: transform;
+}
+
+.aurora-bg__blob--1 {
+  width: 60vw;
+  height: 60vw;
+  max-width: 40rem;
+  max-height: 40rem;
+  top: -10%;
+  left: -10%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 240, 240, 0.18),
+    transparent 65%
+  );
+  animation: auroraDrift 20s ease-in-out infinite;
+}
+
+.aurora-bg__blob--2 {
+  width: 55vw;
+  height: 55vw;
+  max-width: 36rem;
+  max-height: 36rem;
+  top: 40%;
+  right: -15%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(124, 131, 253, 0.2),
+    transparent 65%
+  );
+  animation: auroraDrift 24s ease-in-out infinite reverse;
+}
+
+.aurora-bg__blob--3 {
+  width: 50vw;
+  height: 50vw;
+  max-width: 32rem;
+  max-height: 32rem;
+  bottom: -10%;
+  left: 30%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(0, 160, 128, 0.15),
+    transparent 60%
+  );
+  animation: auroraDrift 28s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+@media (max-width: 640px) {
+  .aurora-bg {
+    filter: blur(40px);
+  }
+
+  .aurora-bg__blob {
+    opacity: 0.3;
+  }
 }
 
 main {
