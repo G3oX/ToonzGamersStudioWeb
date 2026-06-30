@@ -70,35 +70,5 @@ export const projectsConfig: ProjectsConfig = {
       subscribe: true,
       // image y links se añadirán cuando el proyecto tenga material publicable.
     },
-    {
-      id: "placeholder-project",
-      title: "Próximo proyecto",
-      description:
-        "Placeholder para probar el scroll horizontal y el indicador de progreso. Pronto anunciaremos un nuevo juego aquí.",
-      status: "in_development",
-      statusLabel: "En desarrollo",
-      // subscribe omitido — sin formulario de suscripción en esta tarjeta.
-      subscribe: true,
-    },
-    {
-      id: "placeholder-project 2",
-      title: "Próximo proyecto 2",
-      description:
-        "Placeholder para probar el scroll horizontal y el indicador de progreso. Pronto anunciaremos un nuevo juego aquí.",
-      status: "in_development",
-      statusLabel: "En desarrollo",
-      // subscribe omitido — sin formulario de suscripción en esta tarjeta.
-      subscribe: true,
-    },
-    {
-      id: "placeholder-project 3",
-      title: "Próximo proyecto 3",
-      description:
-        "Placeholder para probar el scroll horizontal y el indicador de progreso. Pronto anunciaremos un nuevo juego aquí.",
-      status: "in_development",
-      statusLabel: "En desarrollo",
-      // subscribe omitido — sin formulario de suscripción en esta tarjeta.
-      subscribe: true,
-    },
   ],
 };

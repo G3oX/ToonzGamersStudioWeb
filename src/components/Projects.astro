@@ -421,6 +421,11 @@ const platformIcons: Record<Platform, string> = {
     scroll-snap-align: center;
   }
 
+  /* Center the card when there's only one project (native scroll mode). */
+  .projects__item:only-child {
+    margin-inline: auto;
+  }
+
   /* ─── Project card ─────────────────────────────────────── */
   .projects__card {
     position: relative;
