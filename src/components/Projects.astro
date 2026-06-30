@@ -226,7 +226,16 @@ const platformIcons: Record<Platform, string> = {
         var t = Math.min(absOffset, 1);
         var scale = 1 - t * (1 - SIDE_SCALE);
         var opacity = 1 - t * (1 - SIDE_OPACITY);
-        if (absOffset > 1) opacity = 0;
+
+        // Smooth fade-out beyond the adjacent position (1 < absOffset <= 1.5).
+        // This lets the next card appear before the far card disappears,
+        // so side cards are always visible while transitioning.
+        if (absOffset > 1) {
+          opacity *= Math.max(0, 1 - (absOffset - 1) / 0.5);
+        }
+
+        var isHidden = absOffset > 1.5;
+        if (isHidden) opacity = 0;
 
         var zIndex = absOffset < 0.5 ? 2 : 1;
         var blur = absOffset > 0.05 ? "1px" : "0px";
@@ -241,12 +250,14 @@ const platformIcons: Record<Platform, string> = {
         item.style.opacity = String(opacity);
         item.style.zIndex = String(zIndex);
         item.style.filter = "blur(" + blur + ")";
+        item.style.pointerEvents = isHidden ? "none" : "auto";
 
         // Side cards are clickable/keyboard-activatable to center them.
+        // Only cards within visible range (absOffset <= 1) are interactive.
         var nameEl = item.querySelector(".projects__name");
         var title = nameEl ? nameEl.textContent || "" : "";
 
-        if (absOffset > 0.5) {
+        if (absOffset > 0.5 && !isHidden) {
           item.classList.add("is-side");
           item.setAttribute("tabindex", "0");
           item.setAttribute("role", "button");

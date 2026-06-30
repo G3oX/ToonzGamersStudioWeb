@@ -90,5 +90,15 @@ export const projectsConfig: ProjectsConfig = {
       // subscribe omitido — sin formulario de suscripción en esta tarjeta.
       subscribe: true,
     },
+    {
+      id: "placeholder-project 3",
+      title: "Próximo proyecto 3",
+      description:
+        "Placeholder para probar el scroll horizontal y el indicador de progreso. Pronto anunciaremos un nuevo juego aquí.",
+      status: "in_development",
+      statusLabel: "En desarrollo",
+      // subscribe omitido — sin formulario de suscripción en esta tarjeta.
+      subscribe: true,
+    },
   ],
 };
