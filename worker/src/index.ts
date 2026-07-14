@@ -103,14 +103,16 @@ export default {
 
       const provider = new BrevoProvider(config.BREVO_API_KEY, listId);
       const service = new NewsletterService(provider);
-      await service.subscribe(email);
+      const result = await service.subscribe(email);
 
       // Log seguro: solo el dominio, no el email completo
       const domain = email.split("@")[1] || "desconocido";
       console.log(`[newsletter] Subscribed: ${domain}`);
 
       return jsonSuccess(
-        "¡Suscripción confirmada! Revisa tu correo.",
+        result.alreadySubscribed
+          ? "Tu suscripción ya está confirmada. ¡Gracias!"
+          : "¡Suscripción confirmada! Revisa tu correo.",
         corsHeaders,
       );
     } catch (err) {
