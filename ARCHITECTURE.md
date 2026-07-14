@@ -1,10 +1,11 @@
 # Arquitectura — ToonzGamers Studio Web
 
 Sitio web oficial de **ToonzGamers Studio**, un estudio independiente de
-desarrollo de videojuegos formado por un único desarrollador. Es una
-*landing page* de una sola página construida con **Astro 7** que presenta
-el estudio, sus proyectos, sus redes sociales y dos formularios de
-suscripción (newsletter general y novedades de proyectos).
+desarrollo de videojuegos formado por un único desarrollador. Construido
+con **Astro 7**, el sitio consta de una *landing page* principal que
+presenta el estudio, sus proyectos, sus redes sociales y dos formularios
+de suscripción (newsletter general y novedades de proyectos), y una
+página secundaria con la **Política de Privacidad** legal del estudio.
 
 El repositorio contiene **dos proyectos independientes**:
 
@@ -33,6 +34,13 @@ vive en archivos de configuración TypeScript y se renderiza en tiempo de
 build. El único componente dinámico es el formulario de newsletter, que
 hace peticiones cross-origin al Worker.
 
+El sitio tiene **dos rutas**:
+
+1. `/` — *landing page* principal (Hero + Projects + ProjectSubscribe +
+   SocialLinks + NewsletterForm).
+2. `/privacy-policy` — página legal con la Política de Privacidad del
+   estudio, generada desde `src/config/privacy-policy.ts`.
+
 ---
 
 ## 2. Estructura del proyecto
@@ -59,11 +67,13 @@ ToonzGamersStudioWeb/
 │   │   ├── social.ts         #   SocialLinksConfig: enlaces a redes
 │   │   ├── projects.ts       #   ProjectsConfig: proyectos / juegos
 │   │   ├── newsletter.ts     #   NewsletterConfig: endpoint + mensajes
-│   │   └── project-newsletter.ts # ProjectNewsletterConfig (lista Brevo diferente)
+│   │   ├── project-newsletter.ts # ProjectNewsletterConfig (lista Brevo diferente)
+│   │   └── privacy-policy.ts #   PrivacyPolicyConfig: texto legal de privacidad
 │   ├── layouts/
 │   │   └── MainLayout.astro  # Shell HTML: <head>, SEO, favicons, noise, reveal
 │   ├── pages/
-│   │   └── index.astro       # Página única: Hero + Projects + ProjectSubscribe + Social + Newsletter
+│   │   ├── index.astro       # Landing principal: Hero + Projects + ProjectSubscribe + Social + Newsletter
+│   │   └── privacy-policy.astro # Página legal: Política de Privacidad (/privacy-policy)
 │   ├── components/
 │   │   ├── Hero.astro        # Logo + título + descripción con aurora de fondo
 │   │   ├── Projects.astro    # Scroll horizontal modular de proyectos (scroll-snap)
@@ -93,7 +103,7 @@ ToonzGamersStudioWeb/
 ### 3.1 Web Astro
 
 ```text
-src/config/*.ts  ──►  src/pages/index.astro
+src/config/*.ts  ──►  src/pages/index.astro          (landing principal)
                          │
                          ├── MainLayout.astro  (shell HTML + SEO + scripts)
                          │      └── global.css (tokens + reset + animaciones)
@@ -102,16 +112,27 @@ src/config/*.ts  ──►  src/pages/index.astro
                          ├── ProjectSubscribe.astro (suscripción a novedades de proyectos)
                          ├── SocialLinks.astro (nav de redes)
                          └── NewsletterForm.astro (formulario de newsletter)
-                                  │
-                                  ▼
-                         dist/index.html  (HTML estático + CSS + assets)
+                                   │
+                                   ▼
+                          dist/index.html  (HTML estático + CSS + assets)
+
+src/config/privacy-policy.ts  ──►  src/pages/privacy-policy.astro  (/privacy-policy)
+                                       │
+                                       ├── MainLayout.astro  (shell HTML + SEO + scripts)
+                                       └── <article class="policy">  (documento legal, estilos scoped)
+                                                   │
+                                                   ▼
+                                       dist/privacy-policy/index.html
 ```
 
 1. **Configuración** (`src/config/`): `siteConfig`, `socialLinks`,
-   `projectsConfig`, `newsletterConfig` y `projectNewsletterConfig` son
-   objetos TypeScript tipados. Fuente única de verdad.
-2. **Página** (`index.astro`): importa la configuración y los cinco
-   componentes y los compone dentro de `<MainLayout>`.
+   `projectsConfig`, `newsletterConfig`, `projectNewsletterConfig` y
+   `privacyPolicyConfig` son objetos TypeScript tipados. Fuente única de
+   verdad.
+2. **Páginas** (`src/pages/`): `index.astro` importa la configuración y los
+   cinco componentes y los compone dentro de `<MainLayout>`.
+   `privacy-policy.astro` importa `privacyPolicyConfig` y renderiza el
+   documento legal dentro de `<MainLayout>`.
 3. **Layout** (`MainLayout.astro`): genera el `<!doctype html>`, el `<head>`
    con SEO, favicons, overlay de ruido, `<slot />` y el script de reveal.
 4. **Componentes**: cada uno autónomo, con marcado semántico y estilos
@@ -151,7 +172,7 @@ muestra el mensaje según el estado.
 
 ### 4.1 Configuración (`src/config/`)
 
-Capa de **datos**. Cinco módulos tipados:
+Capa de **datos**. Seis módulos tipados:
 
 - **`site.ts`** — `SiteConfig` con `name`, `description`, `url`
   (`https://toonzgamers.com`), `locale` (`es_ES`) y `lang` (`es`).
@@ -172,6 +193,12 @@ Capa de **datos**. Cinco módulos tipados:
   Brevo diferente**. Por ahora `endpoint` es un placeholder (`#`) y
   añade el mensaje `comingSoon`. Los valores se serializan vía
   `data-config` en `ProjectSubscribe.astro`.
+- **`privacy-policy.ts`** — `PrivacyPolicyConfig` con el `title`, la fecha
+  `lastUpdated`, un array de `sections` (cada una con `id`, `title`,
+  `paragraphs?`, `list?` y `subsections?`) y un objeto `contact` (`name` +
+  `email`). Es la fuente única de verdad para el contenido legal de la
+  página `/privacy-policy`. El email de contacto es
+  `privacy@toonzgamers.com`.
 
 **Convención:** cualquier contenido reutilizable o que pueda cambiar debe
 vivir aquí como dato tipado, no hardcodeado en el marcado.
@@ -192,11 +219,18 @@ Capa de **presentación global**. Responsabilidades:
   `IntersectionObserver` para añadir `.is-visible` a los `.reveal`. Respeta
   `prefers-reduced-motion`.
 
-### 4.3 Página (`src/pages/index.astro`)
+### 4.3 Páginas (`src/pages/`)
 
-Capa de **composición**. Única ruta del sitio (`/`). Importa el layout y
-los cinco componentes y los anida dentro de `<main>` en orden: Hero →
-Projects → ProjectSubscribe → SocialLinks → NewsletterForm.
+Capa de **composición**. El sitio tiene dos rutas:
+
+- **`index.astro`** (`/`): la *landing page* principal. Importa el layout y
+  los cinco componentes y los anida dentro de `<main>` en orden: Hero →
+  Projects → ProjectSubscribe → SocialLinks → NewsletterForm.
+- **`privacy-policy.astro`** (`/privacy-policy`): página legal con la
+  Política de Privacidad del estudio. Importa `privacyPolicyConfig` y
+  renderiza el documento dentro de `<MainLayout>`. No usa componentes de
+  UI compartidos: el marcado y los estilos viven en el propio archivo
+  (estilos *scoped* con prefijo BEM `.policy__*`). Ver sección 4.6.
 
 ### 4.4 Componentes (`src/components/`)
 
@@ -302,6 +336,38 @@ Capa de **design system**. Define:
 y `global.css` para tokens, reset, utilidades y keyframes compartidos.
 `NewsletterForm` define tokens locales en su propio scope en lugar de
 añadirlos a `:root`.
+
+### 4.6 Página de Política de Privacidad (`src/pages/privacy-policy.astro`)
+
+Página legal secundaria en la ruta `/privacy-policy`. A diferencia de los
+componentes de la *landing*, es una **página autónoma**: el marcado y los
+estilos viven en el propio archivo, sin componentes de UI compartidos.
+
+- **Config-driven**: lee `privacyPolicyConfig` desde
+  `src/config/privacy-policy.ts` y renderiza el documento legal de forma
+  declarativa (secciones, subsecciones, listas y bloque de contacto).
+- **`<MainLayout>`**: usa el mismo layout que la *landing*, por lo que
+  hereda SEO completo (`title`, `description`, canonical, Open Graph,
+  Twitter Card), favicons, aurora de fondo, overlay de ruido y script de
+  reveal. El `<title>` sigue el patrón
+  `Política de Privacidad de ToonzGamers | ToonzGamers Studio`.
+- **Estructura semántica**: `<article class="policy reveal">` con
+  `<header>` (enlace de vuelta, título h1, fecha de actualización),
+  `<div class="policy__body">` con las secciones (`<section>` + `<h2>` +
+  `<h3>` para subsecciones) y `<footer>` con segundo enlace de vuelta.
+- **Bloque de contacto**: la sección 14 renderiza un bloque destacado
+  (`.policy__contact`) con el nombre del estudio y un enlace
+  `mailto:privacy@toonzgamers.com`.
+- **Estilos scoped**: prefijo BEM `.policy__*`, usa tokens del design system
+  (`--color-*`, `--space-*`, `--ease-*`, `--z-*`). Tipografía optimizada
+  para lectura de documento legal (line-height 1.7, max-width 50rem).
+  Responsive (`@media (max-width: 640px)`).
+- **Accesibilidad**: jerarquía de encabezados correcta (h1 → h2 → h3),
+  enlaces de vuelta con `aria-label`, `:focus-visible` heredado del
+  design system, `.reveal` respeta `prefers-reduced-motion` y
+  `@media (scripting: none)`.
+- **Sin JS de cliente**: la página no añade ningún `<script>` propio; el
+  único JS que ejecuta es el script de reveal global del layout.
 
 ---
 

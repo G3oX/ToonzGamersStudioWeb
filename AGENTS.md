@@ -52,8 +52,9 @@ usuario lo pida explícitamente. El sitio es deliberadamente minimalista.
 ### Configuración tipada centralizada
 
 - **Todo el contenido editable vive en `src/config/`** como módulos
-  TypeScript tipados (`site.ts`, `social.ts`). Es la **fuente única de
-  verdad**.
+  TypeScript tipados (`site.ts`, `social.ts`, `projects.ts`,
+  `newsletter.ts`, `project-newsletter.ts`, `privacy-policy.ts`). Es la
+  **fuente única de verdad**.
 - No hardcodees texto, URLs ni metadatos en el marcado: añádelos como datos
   tipados en `src/config/` e impórtalos.
 - Define una `interface` para cada estructura de configuración y exporta la

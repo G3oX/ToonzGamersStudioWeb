@@ -1,10 +1,11 @@
 # ToonzGamers Studio Web
 
 Sitio web oficial de **ToonzGamers Studio**, estudio independiente de
-desarrollo de videojuegos formado por un único desarrollador. Es una
-*landing page* de una sola página que presenta el estudio, sus proyectos,
-sus redes sociales y dos formularios de suscripción (newsletter general
-y novedades de proyectos).
+desarrollo de videojuegos formado por un único desarrollador. El sitio
+incluye una *landing page* principal que presenta el estudio, sus
+proyectos, sus redes sociales y dos formularios de suscripción
+(newsletter general y novedades de proyectos), y una página secundaria
+con la **Política de Privacidad** legal del estudio.
 
 El repositorio contiene **dos proyectos independientes**:
 
@@ -38,11 +39,13 @@ de UI ni dependencias runtime. Rápido, accesible y estático.
 │   │   ├── social.ts        #   enlaces a redes sociales
 │   │   ├── projects.ts      #   proyectos / juegos del estudio
 │   │   ├── newsletter.ts    #   endpoint + mensajes de la newsletter general
-│   │   └── project-newsletter.ts # endpoint + mensajes de novedades de proyectos
+│   │   ├── project-newsletter.ts # endpoint + mensajes de novedades de proyectos
+│   │   └── privacy-policy.ts #   texto legal de la Política de Privacidad
 │   ├── layouts/
 │   │   └── MainLayout.astro # Shell HTML: SEO, favicons, noise, reveal
 │   ├── pages/
-│   │   └── index.astro      # Página única (/): Hero + Projects + ProjectSubscribe + Social + Newsletter
+│   │   ├── index.astro      # Landing principal (/): Hero + Projects + ProjectSubscribe + Social + Newsletter
+│   │   └── privacy-policy.astro # Política de Privacidad (/privacy-policy)
 │   ├── components/
 │   │   ├── Hero.astro       # Logo + título + descripción con aurora
 │   │   ├── Projects.astro   # Scroll horizontal modular de proyectos
@@ -68,7 +71,8 @@ de UI ni dependencias runtime. Rápido, accesible y estático.
 ```
 
 Astro busca archivos `.astro` en `src/pages/` y los expone como rutas según
-su nombre. Aquí solo existe `index.astro` → ruta `/`.
+su nombre. El sitio tiene dos rutas: `index.astro` → `/` y
+`privacy-policy.astro` → `/privacy-policy`.
 
 ---
 
@@ -197,6 +201,33 @@ export const projectNewsletterConfig: ProjectNewsletterConfig = {
 > Cuando el backend esté listo, reemplaza `endpoint` y el bloque
 > `setTimeout` en `ProjectSubscribe.astro` por una llamada `fetch` real
 > (como en `NewsletterForm.astro`).
+
+### Política de Privacidad — `src/config/privacy-policy.ts`
+
+```ts
+export const privacyPolicyConfig: PrivacyPolicyConfig = {
+  title: "Política de Privacidad de ToonzGamers",
+  lastUpdated: "29 de julio de 2026",
+  sections: [
+    { id: "1", title: "Introducción", paragraphs: ["…"] },
+    { id: "3", title: "Información que podemos recopilar", subsections: [
+      { id: "3.1", title: "Información técnica", list: ["…"] },
+      // …
+    ]},
+    // … 14 secciones en total
+  ],
+  contact: {
+    name: "ToonzGamers",
+    email: "privacy@toonzgamers.com",
+  },
+};
+```
+
+> El contenido legal vive como dato tipado en `src/config/privacy-policy.ts`
+> y se renderiza en `/privacy-policy` vía `src/pages/privacy-policy.astro`.
+> Para actualizar el texto, edita las `sections`; para cambiar el email de
+> contacto, modifica `contact.email`. La fecha `lastUpdated` se muestra en
+> el encabezado de la página.
 
 ### Design tokens — `src/styles/global.css`
 
