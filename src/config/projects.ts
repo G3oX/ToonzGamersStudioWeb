@@ -62,7 +62,7 @@ export const projectsConfig: ProjectsConfig = {
       id: "monkeys-tower-world-tour",
       title: "Monkeys Tower World Tour",
       description:
-        "Construye torres de monos para ganar el mundial. Supera los distintos niveles, usa power ups y personaliza tu pesonaje con atuendos de todo el mundo. ¡Llega a lo más alto y no los dejes caer!",
+        "Recorre el mundo y construye torres de monos a base de cañonazos para conseguir la copa Monada. Supera los distintos niveles, usa power-ups y personaliza tu personaje con atuendos de las distintas localidades. ¡Llega a lo más alto y no los dejes caer!",
       status: "in_development",
       statusLabel: "En desarrollo",
       platforms: ["android"],
