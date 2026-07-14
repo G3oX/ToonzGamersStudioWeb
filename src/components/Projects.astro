@@ -525,8 +525,8 @@ const platformIcons: Record<Platform, string> = {
     grid-template-rows:
       auto
       auto
-      minmax(0, 1fr)
-      auto;
+      auto
+      minmax(0, 1fr);
     gap: var(--space-md);
     padding: var(--space-lg);
     min-height: 0;
@@ -610,8 +610,7 @@ const platformIcons: Record<Platform, string> = {
 
   /* ─── Footer (links or subscribe, anchored to bottom) ─── */
   .projects__footer {
-    /* Grid row `auto` handles natural sizing */
-    align-self: end;
+    align-self: center;
   }
 
   /* ─── Links ────────────────────────────────────────────── */
@@ -790,10 +789,6 @@ const platformIcons: Record<Platform, string> = {
       gap: var(--space-sm);
       padding: var(--space-md);
     }
-
-    .projects__footer {
-      margin-top: var(--space-md);
-    }
   }
 
   /* ─── Short viewports (panoramic / landscape) ─────────── */
@@ -810,10 +805,6 @@ const platformIcons: Record<Platform, string> = {
     .projects__body {
       gap: var(--space-sm);
       padding: var(--space-md);
-    }
-
-    .projects__footer {
-      margin-top: var(--space-md);
     }
   } 
 
