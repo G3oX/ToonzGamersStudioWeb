@@ -8,6 +8,8 @@
   --color-muted: #9aa3b2;
   --color-accent: #7c83fd;
   --color-accent-hover: #a5b4fc;
+  --color-success: #4ade80;
+  --color-error: #f87171;
   --color-border: rgba(242, 244, 248, 0.08);
 
   /* Extended palette for aurora and kinetic gradients */
