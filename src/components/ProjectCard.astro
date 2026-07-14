@@ -1,0 +1,411 @@
+---
+import type { Project, ProjectStatus } from "../config/projects";
+import { projectStatusLabels } from "../config/projects";
+import { iconPaths } from "../config/icons";
+import ProjectSubscribe from "./ProjectSubscribe.astro";
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+
+const badgeClassMap: Record<ProjectStatus, string> = {
+  coming_soon: "projects__badge--coming-soon",
+  in_development: "projects__badge--in-development",
+  available: "projects__badge--available",
+};
+---
+
+<article class="projects__card">
+  <div class="projects__media">
+    {
+      project.image ? (
+        <img
+          class="projects__card-image"
+          src={project.image}
+          alt={project.title}
+          width="640"
+          height="360"
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div class="projects__image-placeholder" aria-hidden="true">
+          <span class="projects__initial">{project.title.charAt(0)}</span>
+        </div>
+      )
+    }
+  </div>
+
+  <div class="projects__body">
+    <div class="projects__meta">
+      <span
+        class:list={[
+          "projects__badge",
+          badgeClassMap[project.status],
+        ]}
+      >
+        {projectStatusLabels[project.status]}
+      </span>
+
+      {
+        project.platforms && project.platforms.length > 0 && (
+          <ul class="projects__platforms" role="list">
+            {project.platforms.map((platform) => (
+              <li class="projects__platform">
+                <svg
+                  class="projects__platform-icon"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d={iconPaths[platform]} />
+                </svg>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    <h3 class="projects__name">{project.title}</h3>
+    <p class="projects__description" tabindex="0">{project.description}</p>
+
+    <div class="projects__footer">
+      {
+        project.subscribe ? (
+          <ProjectSubscribe projectId={project.id} inline />
+        ) : project.links && project.links.length > 0 ? (
+          <div class="projects__links">
+            {project.links.map((link) => (
+              <a
+                class="projects__link"
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {link.icon && (
+                  <svg
+                    class="projects__link-icon"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d={iconPaths[link.icon]} />
+                  </svg>
+                )}
+                {link.label}
+              </a>
+            ))}
+          </div>
+        ) : null
+      }
+    </div>
+  </div>
+</article>
+
+<style>
+  /* ─── Project card ─────────────────────────────────────── */
+  .projects__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: var(--card-width);
+    height: min(82vh, 42rem);
+    border-radius: 1.25rem;
+    background-color: rgba(19, 22, 29, 0.55);
+    border: 1px solid rgba(242, 244, 248, 0.1);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 6px 18px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px) saturate(135%);
+    -webkit-backdrop-filter: blur(12px) saturate(135%);
+    overflow: hidden;
+    isolation: isolate;
+    transition:
+      box-shadow 0.35s var(--ease-out),
+      border-color 0.25s var(--ease-out);
+  }
+
+  .projects__card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    opacity: 0.6;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .projects__card:hover,
+  .projects__card:focus-within {
+    border-color: rgba(124, 131, 253, 0.4);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 14px 32px rgba(0, 0, 0, 0.35),
+      0 0 24px rgba(124, 131, 253, 0.18);
+  }
+
+  /* ─── Card media ───────────────────────────────────────── */
+  .projects__media {
+    position: relative;
+    flex-shrink: 0;
+    aspect-ratio: 16 / 9;
+    max-height: 14rem;
+    overflow: hidden;
+    background-color: var(--color-surface);
+  }
+
+  .projects__card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  .projects__card:hover .projects__card-image,
+  .projects__card:focus-within .projects__card-image {
+    transform: scale(1.06);
+  }
+
+  .projects__image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(
+      135deg,
+      var(--color-teal),
+      var(--color-indigo)
+    );
+  }
+
+  .projects__initial {
+    font-size: 6rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.9);
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    text-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  /* ─── Card body ────────────────────────────────────────── */
+  .projects__body {
+    display: grid;
+    grid-template-rows:
+      auto
+      auto
+      minmax(0, 1fr)
+      auto;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    min-height: 0;
+  }
+
+  /* ─── Meta row: badge + platform icons ─────────────────── */
+  .projects__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .projects__platforms {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .projects__platform {
+    display: flex;
+    align-items: center;
+    color: var(--color-muted);
+    transition: color 0.25s var(--ease-out);
+  }
+
+  .projects__platform-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  .projects__card:hover .projects__platform,
+  .projects__card:focus-within .projects__platform {
+    color: var(--color-text);
+  }
+
+  .projects__badge {
+    align-self: flex-start;
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .projects__badge--coming-soon {
+    color: #fbbf24;
+    background-color: rgba(251, 191, 36, 0.12);
+    border: 1px solid rgba(251, 191, 36, 0.25);
+  }
+
+  .projects__badge--in-development {
+    color: var(--color-accent-hover);
+    background-color: rgba(124, 131, 253, 0.12);
+    border: 1px solid rgba(124, 131, 253, 0.25);
+  }
+
+  .projects__badge--available {
+    color: #34d399;
+    background-color: rgba(0, 160, 128, 0.12);
+    border: 1px solid rgba(0, 160, 128, 0.25);
+  }
+
+  .projects__name {
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--color-text);
+  }
+
+  .projects__description {
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    color: var(--color-muted);
+    line-height: 1.65;
+  }
+
+  /* ─── Footer (links or subscribe, anchored to bottom) ─── */
+  .projects__footer {
+    align-self: center;
+  }
+
+  /* ─── Links ────────────────────────────────────────────── */
+  .projects__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .projects__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-bg);
+    background-color: var(--color-accent);
+    border-radius: 0.85rem;
+    transition:
+      background-color 0.25s var(--ease-out),
+      transform 0.25s var(--ease-spring),
+      box-shadow 0.25s var(--ease-out);
+    will-change: transform;
+  }
+
+  .projects__link-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+  }
+
+  .projects__link:hover,
+  .projects__link:focus-visible {
+    background-color: var(--color-accent-hover);
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(124, 131, 253, 0.25);
+  }
+
+  @media (min-width: 768px) {
+    .projects__body {
+      padding: var(--space-xl);
+    }
+  }
+
+  /* ─── Tall viewports where card is capped at 42rem ────── */
+  /* When 82vh exceeds 42rem, the card caps and the base spacing
+     leaves no room for the description. Reduce media/gap/padding
+     to free space, mirroring the max-height: 820px tweaks. */
+  @media (min-height: 821px) and (min-width: 768px) {
+    .projects__media {
+      max-height: 10rem;
+    }
+
+    .projects__body {
+      gap: var(--space-sm);
+      padding: var(--space-md);
+    }
+  }
+
+  /* ─── Short viewports (panoramic / landscape) ─────────── */
+  /* Reduce media height and spacing so the subscribe form fits. */
+  @media (max-height: 820px) {
+    .projects__card {
+      height: min(84vh, 42rem);
+    }
+
+    .projects__media {
+      max-height: 10rem;
+    }
+
+    .projects__body {
+      gap: var(--space-sm);
+      padding: var(--space-md);
+    }
+  } 
+
+  @media (max-height: 620px) {
+    .projects__card {
+      height: min(88vh, 42rem);
+    }
+
+    .projects__media {
+      max-height: 7rem;
+    }
+
+    .projects__body {
+      gap: var(--space-xs);
+      padding: var(--space-sm);
+    }
+
+    .projects__initial {
+      font-size: 4rem;
+    }
+  }
+
+  /* ─── Reduced motion ───────────────────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    .projects__card {
+      transition: none;
+    }
+
+    .projects__card-image {
+      transition: none;
+    }
+  }
+</style>

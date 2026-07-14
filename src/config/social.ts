@@ -1,8 +1,10 @@
+import type { SocialIcon } from "./icons";
+
 export interface SocialLink {
   key: string;
   label: string;
   href: string;
-  icon: string;
+  icon: SocialIcon;
 }
 
 export interface SocialLinksConfig {
