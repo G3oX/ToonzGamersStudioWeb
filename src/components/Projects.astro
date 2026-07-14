@@ -522,9 +522,12 @@ const platformIcons: Record<Platform, string> = {
   /* ─── Card body ────────────────────────────────────────── */
   .projects__body {
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-rows:
+      auto
+      auto
+      minmax(0, 1fr)
+      auto;
     gap: var(--space-md);
-    flex: 1 1 auto;
     padding: var(--space-lg);
     min-height: 0;
   }
@@ -608,6 +611,7 @@ const platformIcons: Record<Platform, string> = {
   /* ─── Footer (links or subscribe, anchored to bottom) ─── */
   .projects__footer {
     /* Grid row `auto` handles natural sizing */
+    align-self: end;
   }
 
   /* ─── Links ────────────────────────────────────────────── */
@@ -773,6 +777,25 @@ const platformIcons: Record<Platform, string> = {
     }
   }
 
+  /* ─── Tall viewports where card is capped at 42rem ────── */
+  /* When 82vh exceeds 42rem, the card caps and the base spacing
+     leaves no room for the description. Reduce media/gap/padding
+     to free space, mirroring the max-height: 820px tweaks. */
+  @media (min-height: 821px) and (min-width: 768px) {
+    .projects__media {
+      max-height: 10rem;
+    }
+
+    .projects__body {
+      gap: var(--space-sm);
+      padding: var(--space-md);
+    }
+
+    .projects__footer {
+      margin-top: var(--space-md);
+    }
+  }
+
   /* ─── Short viewports (panoramic / landscape) ─────────── */
   /* Reduce media height and spacing so the subscribe form fits. */
   @media (max-height: 820px) {
@@ -789,15 +812,10 @@ const platformIcons: Record<Platform, string> = {
       padding: var(--space-md);
     }
 
-    .projects__name {
-      font-size: clamp(1.25rem, 3vw, 1.75rem);
+    .projects__footer {
+      margin-top: var(--space-md);
     }
-
-    .projects__description {
-      font-size: 0.9375rem;
-      line-height: 1.55;
-    }
-  }
+  } 
 
   @media (max-height: 620px) {
     .projects__card {
