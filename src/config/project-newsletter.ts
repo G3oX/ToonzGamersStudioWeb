@@ -29,7 +29,7 @@ export interface ProjectNewsletterConfig {
 }
 
 export const projectNewsletterConfig: ProjectNewsletterConfig = {
-  endpoint: "https://webnewsletter.toonzgamersstudio.workers.dev/",
+  endpoint: "https://webnewsletter.toonzgamersstudio.workers.dev/api/newsletter",
   messages: {
     success: "¡Suscripción confirmada! Te avisaremos las novedades.",
     alreadySubscribed: "Ya estás suscrito. ¡Gracias!",

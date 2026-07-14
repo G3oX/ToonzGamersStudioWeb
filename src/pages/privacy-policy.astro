@@ -1,14 +1,13 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
 import { privacyPolicyConfig as policy } from "../config/privacy-policy";
-import { siteConfig } from "../config/site";
 
 const contactHref = `mailto:${policy.contact.email}`;
 ---
 
 <MainLayout
     title={policy.title}
-    description="Política de Privacidad de ToonzGamers: cómo recopilamos, usamos y protegemos la información de los usuarios de nuestros videojuegos y servicios digitales."
+    description={policy.description}
 >
     <main>
         <article class="policy reveal">
