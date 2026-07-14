@@ -233,6 +233,6 @@ export const privacyPolicyConfig: PrivacyPolicyConfig = {
   ],
   contact: {
     name: "ToonzGamers",
-    email: "toonzgamersstudio@outlook.es",
+    email: "privacy@toonzgamers.com",
   },
 };
