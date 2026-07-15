@@ -313,6 +313,20 @@ Gestionado en `MainLayout.astro`:
 
 ---
 
+## ⚖️ Licencia de activos
+
+ToonzGamers®, logotipos, imágenes, contenido editorial y elementos gráficos
+no están cubiertos por la licencia AGPL y permanecen bajo todos los derechos
+reservados de sus respectivos propietarios.
+
+---
+
+The ToonzGamers® name, logos, images, artwork, editorial content, and other
+graphical assets are not licensed under the AGPL. All rights are reserved by
+their respective owners.
+
+---
+
 ## 👀 Recursos
 
 - [Documentación de Astro](https://docs.astro.build)
