@@ -72,7 +72,10 @@ export class BrevoProvider implements NewsletterProvider {
         // Error de red al comprobar → se intenta crear igual
       }
 
-      // 2. Crear o actualizar el contacto
+      // 2. Crear o actualizar el contacto.
+      //    El GET anterior ya descartó que el contacto esté en la lista,
+      //    así que cualquier respuesta exitosa del POST significa
+      //    suscripción nueva (no "already subscribed").
       const response = await fetch(contactsUrl, {
         method: "POST",
         headers: {
@@ -84,12 +87,8 @@ export class BrevoProvider implements NewsletterProvider {
         signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
       });
 
-      if (response.status === 201) {
+      if (response.ok) {
         return { success: true, alreadySubscribed: false };
-      }
-
-      if (response.status === 204) {
-        return { success: true, alreadySubscribed: true };
       }
 
       // Error inesperado de la API
