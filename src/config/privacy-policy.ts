@@ -19,6 +19,7 @@ export interface PrivacyPolicyContact {
 
 export interface PrivacyPolicyConfig {
   title: string;
+  description: string;
   lastUpdated: string;
   sections: PrivacyPolicySection[];
   contact: PrivacyPolicyContact;
@@ -26,6 +27,8 @@ export interface PrivacyPolicyConfig {
 
 export const privacyPolicyConfig: PrivacyPolicyConfig = {
   title: "Política de Privacidad de ToonzGamers",
+  description:
+    "Política de Privacidad de ToonzGamers: cómo recopilamos, usamos y protegemos la información de los usuarios de nuestros videojuegos y servicios digitales.",
   lastUpdated: "29 de julio de 2026",
   sections: [
     {

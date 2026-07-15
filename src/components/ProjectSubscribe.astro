@@ -212,10 +212,10 @@ const messageId = `psubscribe-message-${suffix}`;
             }
 
             if (res.ok && data && data.success === true) {
-              setMessage(
-                data.message || CONFIG.messages.success,
-                "success"
-              );
+              var msg = data.alreadySubscribed === true
+                ? CONFIG.messages.alreadySubscribed
+                : CONFIG.messages.success;
+              setMessage(msg, "success");
               button.classList.add("is-success");
               form.reset();
             } else if (res.status === 429) {
@@ -247,12 +247,24 @@ const messageId = `psubscribe-message-${suffix}`;
 <style>
   /* ─── Project subscription section ───────────────────── */
   .psubscribe {
-    --psubscribe-success: #4ade80;
-    --psubscribe-error: #f87171;
-    --psubscribe-on-accent: #0b0d12;
-    --psubscribe-accent-ring: rgba(124, 131, 253, 0.25);
-    --psubscribe-accent-glow: rgba(124, 131, 253, 0.3);
-    --psubscribe-error-ring: rgba(248, 113, 113, 0.2);
+    --psubscribe-success: var(--color-success);
+    --psubscribe-error: var(--color-error);
+    --psubscribe-on-accent: var(--color-bg);
+    --psubscribe-accent-ring: color-mix(
+      in srgb,
+      var(--color-accent) 25%,
+      transparent
+    );
+    --psubscribe-accent-glow: color-mix(
+      in srgb,
+      var(--color-accent) 30%,
+      transparent
+    );
+    --psubscribe-error-ring: color-mix(
+      in srgb,
+      var(--color-error) 20%,
+      transparent
+    );
 
     display: flex;
     justify-content: center;

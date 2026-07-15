@@ -41,8 +41,7 @@ export class BrevoProvider implements NewsletterProvider {
    *                 error de red, o se supera el tiempo de espera.
    */
   async subscribe(email: string): Promise<SubscribeResult> {
-    const url = `${BREVO_API_BASE}/contacts`;
-
+    const contactsUrl = `${BREVO_API_BASE}/contacts`;
     const body = JSON.stringify({
       email,
       listIds: [this.listId],
@@ -50,7 +49,31 @@ export class BrevoProvider implements NewsletterProvider {
     });
 
     try {
-      const response = await fetch(url, {
+      // 1. Comprobar si el contacto ya existe y ya está en la lista
+      try {
+        const checkUrl = `${BREVO_API_BASE}/contacts/${encodeURIComponent(email)}`;
+        const checkRes = await fetch(checkUrl, {
+          method: "GET",
+          headers: {
+            "api-key": this.apiKey,
+            "Accept": "application/json",
+          },
+          signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+        });
+
+        if (checkRes.ok) {
+          const contact = await checkRes.json() as { listIds?: number[] };
+          if (Array.isArray(contact.listIds) && contact.listIds.includes(this.listId)) {
+            return { success: true, alreadySubscribed: true };
+          }
+        }
+        // 404 (contacto no existe) → se crea abajo. Otros errores → se ignoran y se intenta crear igual.
+      } catch {
+        // Error de red al comprobar → se intenta crear igual
+      }
+
+      // 2. Crear o actualizar el contacto
+      const response = await fetch(contactsUrl, {
         method: "POST",
         headers: {
           "api-key": this.apiKey,

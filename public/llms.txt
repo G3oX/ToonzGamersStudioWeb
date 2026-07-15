@@ -1,0 +1,15 @@
+# ToonzGamers Studio
+
+> Estudio independiente de desarrollo de videojuegos formado por un único desarrollador, creando experiencias originales con pasión por el diseño y la tecnología.
+
+## Studio
+
+- [ToonzGamers Studio](https://toonzgamers.com/): Sitio oficial del estudio y presentación de sus proyectos.
+
+## Projects
+
+- [Monkeys Tower World Tour](https://play.google.com/store/apps/details?id=com.toonz.monkeys.tower.world.tour): Juego para Android actualmente en desarrollo.
+
+## Legal
+
+- [Política de Privacidad](https://toonzgamers.com/privacy-policy/): Información sobre recopilación, uso y protección de datos.

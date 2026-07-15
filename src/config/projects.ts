@@ -14,6 +14,12 @@
 
 export type ProjectStatus = "coming_soon" | "in_development" | "available";
 
+export const projectStatusLabels: Record<ProjectStatus, string> = {
+  coming_soon: "Próximamente",
+  in_development: "En desarrollo",
+  available: "Disponible",
+};
+
 export type Platform = "webgl" | "android" | "ios" | "steam" | "epic" | "gog";
 
 export interface ProjectLink {
@@ -34,8 +40,6 @@ export interface Project {
   description: string;
   /** Estado del proyecto para la lógica de color/etiqueta. */
   status: ProjectStatus;
-  /** Texto que se muestra en la chapa de estado. */
-  statusLabel: string;
   /** Plataformas donde está o estará disponible el proyecto. */
   platforms?: Platform[];
   /** Ruta opcional de la imagen destacada (servida desde `public/`). */
@@ -64,7 +68,6 @@ export const projectsConfig: ProjectsConfig = {
       description:
         "Recorre el mundo y construye torres de monos a base de cañonazos para conseguir la copa Monada. Supera los distintos niveles, usa power-ups y personaliza tu personaje con atuendos de las distintas localidades. ¡Llega a lo más alto y no los dejes caer!",
       status: "in_development",
-      statusLabel: "En desarrollo",
       platforms: ["android"],
       links: [
         {
@@ -83,7 +86,6 @@ export const projectsConfig: ProjectsConfig = {
       title: "Nombre del proyecto",
       description: "Descripción corta del proyecto (1-2 frases).",
       status: "in_development",
-      statusLabel: "En desarrollo",
       visible: false,
     },
   ],

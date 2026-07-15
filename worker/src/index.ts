@@ -9,7 +9,7 @@
 
 import { getEnv } from "./env";
 import { getCorsHeaders, isAllowedOrigin, isHoneypotTriggered, sanitizeEmail } from "./security";
-import { jsonError, jsonSilentSuccess, jsonSuccess, noContent, preflightResponse } from "./responses";
+import { jsonError, jsonSilentSuccess, noContent, preflightResponse } from "./responses";
 import { BrevoProvider } from "./brevo-provider";
 import { NewsletterService } from "./newsletter-service";
 
@@ -103,15 +103,24 @@ export default {
 
       const provider = new BrevoProvider(config.BREVO_API_KEY, listId);
       const service = new NewsletterService(provider);
-      await service.subscribe(email);
+      const result = await service.subscribe(email);
 
       // Log seguro: solo el dominio, no el email completo
       const domain = email.split("@")[1] || "desconocido";
       console.log(`[newsletter] Subscribed: ${domain}`);
 
-      return jsonSuccess(
-        "¡Suscripción confirmada! Revisa tu correo.",
-        corsHeaders,
+      return new Response(
+        JSON.stringify({
+          success: true,
+          alreadySubscribed: result.alreadySubscribed,
+        }),
+        {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+            ...corsHeaders,
+          },
+        },
       );
     } catch (err) {
       const message = err instanceof Error ? err.message : "Error desconocido";

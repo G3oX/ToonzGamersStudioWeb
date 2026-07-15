@@ -1,0 +1,45 @@
+# ─────────────────────────────────────────────────────────
+# 🛡️ Security — Battlellama Actions (reusable workflows)
+# ─────────────────────────────────────────────────────────
+# CI-only security gate. Does NOT deploy anything — the Astro site is
+# deployed by Cloudflare Pages' own Git integration (dashboard-managed
+# build/deploy, independent of GitHub Actions), and the Worker deploys
+# manually via `cd worker && npm run deploy` (wrangler). This workflow
+# only scans the repo for leaked secrets, vulnerable dependencies, and
+# JS/TS SAST findings.
+#
+# Source: https://github.com/TheLastBattlellama/Battlellama-actions
+#
+# Pattern: warn on PR (fast feedback, non-blocking), block on push to
+# main (protects the branch Cloudflare Pages builds from).
+
+name: "🛡️ Security"
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-scan:
+    name: "Secrets & Dependency Scan"
+    permissions:
+      contents: read
+      security-events: write
+    uses: TheLastBattlellama/Battlellama-actions/.github/workflows/security-scan.yml@main
+    with:
+      exit-code: ${{ github.event_name == 'pull_request' && '0' || '1' }}
+
+  sast-javascript:
+    name: "JS/TS SAST"
+    permissions:
+      contents: read
+      security-events: write
+    uses: TheLastBattlellama/Battlellama-actions/.github/workflows/sast-javascript.yml@main
+    with:
+      framework: "generic"
+      exit-code: ${{ github.event_name == 'pull_request' && '0' || '1' }}
