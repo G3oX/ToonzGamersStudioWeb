@@ -332,4 +332,4 @@ their respective owners.
 - [Documentación de Astro](https://docs.astro.build)
 - [Documentación de Cloudflare Workers](https://developers.cloudflare.com/workers/)
 - [Documentación de Brevo API](https://developers.brevo.com/)
-- [Discord de Astro](https://astro.build/chat)
+- [Discord de Astro](https://astro.build/chat) 
