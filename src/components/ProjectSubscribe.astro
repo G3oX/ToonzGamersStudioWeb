@@ -212,10 +212,10 @@ const messageId = `psubscribe-message-${suffix}`;
             }
 
             if (res.ok && data && data.success === true) {
-              setMessage(
-                data.message || CONFIG.messages.success,
-                "success"
-              );
+              var msg = data.alreadySubscribed === true
+                ? CONFIG.messages.alreadySubscribed
+                : CONFIG.messages.success;
+              setMessage(msg, "success");
               button.classList.add("is-success");
               form.reset();
             } else if (res.status === 429) {
